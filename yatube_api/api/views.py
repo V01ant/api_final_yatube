@@ -77,46 +77,62 @@ class FollowViesSet(mixins.CreateModelMixin, viewsets.GenericViewSet,
 class CommentViewSet(viewsets.ModelViewSet):
     """A ViewSet for Comment API handling."""
     serializer_class = CommentSerializer
-    # permission_classes = (AuthorOrReadOnly,)
+    permission_classes = (AuthorOrReadOnly,)
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     # def get_queryset(self):
-    #     """Make a custom queryset of a model instance."""
-    #     post_id = self.kwargs.get('post_id')
-    #     new_queryset = Comment.objects.filter(post=post_id)
-    #     return new_queryset
+    #     post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
+    #     queryset = post.comments.select_related('author')
+    #     return queryset
 
     # def perform_create(self, serializer):
-    #     """Create a model instance."""
-    #     post_id = self.kwargs.get('post_id')
-    #     target_post = Post.objects.filter(pk=post_id)
-    #     serializer.save(author=self.request.user, post=target_post[0])
+    #     post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
+    #     serializer.save(author=self.request.user, post=post)
 
 
-    def get_queryset(self): 
-        """Make a custom queryset of a model instance.""" 
-        post_id = self.kwargs.get('post_id') 
-        new_queryset = Comment.objects.filter(post=post_id) 
-        return new_queryset 
- 
-    def perform_update(self, serializer): 
-        """Uplate a model instance.""" 
-        if serializer.instance.author != self.request.user: 
-            raise PermissionDenied('Изменение чужого контента запрещено!') 
-        super(CommentViewSet, self).perform_update(serializer) 
- 
-    def perform_create(self, serializer): 
-        """Create a model instance.""" 
-        post_id = self.kwargs.get('post_id') 
-        target_post = Post.objects.filter(pk=post_id) 
-        serializer.save(author=self.request.user, post=target_post[0]) 
- 
-    def perform_destroy(self, serializer): 
-        """Destroy a model instance.""" 
-        if serializer.author != self.request.user: 
-            raise PermissionDenied('Удаление чужого контента запрещено!') 
-        super(CommentViewSet, self).perform_destroy(serializer)
+    #***************************************************#
+    def get_queryset(self):
+        """Make a custom queryset of a model instance."""
+        post_id = self.kwargs.get('post_id')
+        new_queryset = Comment.objects.filter(post=post_id)
+        return new_queryset
 
+    def perform_create(self, serializer):
+        """Create a model instance."""
+        post_id = self.kwargs.get('post_id')
+        target_post = Post.objects.filter(pk=post_id)
+        serializer.save(author=self.request.user, post=target_post[0])
+
+
+
+
+    #***************************************************#
+
+    # def get_queryset(self): 
+    #     """Make a custom queryset of a model instance.""" 
+    #     post_id = self.kwargs.get('post_id') 
+    #     new_queryset = Comment.objects.filter(post=post_id) 
+    #     return new_queryset 
+ 
+    # def perform_update(self, serializer): 
+    #     """Uplate a model instance.""" 
+    #     if serializer.instance.author != self.request.user: 
+    #         raise PermissionDenied('Изменение чужого контента запрещено!') 
+    #     super(CommentViewSet, self).perform_update(serializer) 
+ 
+    # def perform_create(self, serializer): 
+    #     """Create a model instance.""" 
+    #     post_id = self.kwargs.get('post_id') 
+    #     target_post = Post.objects.filter(pk=post_id) 
+    #     serializer.save(author=self.request.user, post=target_post[0]) 
+ 
+    # def perform_destroy(self, serializer): 
+    #     """Destroy a model instance.""" 
+    #     if serializer.author != self.request.user: 
+    #         raise PermissionDenied('Удаление чужого контента запрещено!') 
+    #     super(CommentViewSet, self).perform_destroy(serializer)
+
+    #***************************************************#
     # def perform_destroy(self, serializer):  # Описываем процедуру удаления ()
     #     if serializer.author != self.request.user:
     #         return Response(serializer, status=status.HTTP_403_FORBIDDEN)
